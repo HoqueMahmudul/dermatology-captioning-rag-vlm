@@ -30,16 +30,15 @@ Each notebook opens with a single **CONFIGURATION** cell holding every path. The
 
 ## Stage 1 — Retrieval-augmented caption generation
 
-The notebook contains **two distinct retrieval paths**, and only the second produced the 16,577-caption corpus. Keep them apart when citing this work.
+The notebook contains **two distinct retrieval paths**.
 
-**Path A — per-image visual retrieval (pilot only, ~1,010 captions)**
+**Path A — per-image visual retrieval**
 
 1. **Embed** every training image with CLIP ViT-L/14 (`clip-ViT-L-14`).
 2. **Index** the embeddings into a **per-label** FAISS `IndexFlatIP` — one index per disease label, so retrieval never crosses a diagnosis boundary.
 3. **Retrieve** the **top-12 nearest neighbours** for each target image, restricted to its own label (`top_k_visual_keywords(..., k_nn=12)`).
 4. **Generate** with Qwen2-VL-2B-Instruct twice per image — with and without the retrieved context — and pick between them.
 
-This path runs only in the preview cells (a 10-image A/B and a 1,000-image always-RAG run). It never wrote the training corpus.
 
 **Path B — per-label context (production, all 16,577 captions)**
 
@@ -59,9 +58,9 @@ Captions completed, after a resume-and-patch pass that filled every gap:
 | test | 3,316 |
 | **total** | **16,577** |
 
-## Stage 2 — LoRA fine-tuning
+## LoRA fine-tuning
 
-Both models were trained on the Stage-1 captions. Note the two runs differ in precision strategy — each uses one of 4-bit quantization or Flash Attention 2, not both:
+
 
 | | SmolVLM | MedGemma |
 | --- | --- | --- |
@@ -79,27 +78,6 @@ Both models were trained on the Stage-1 captions. Note the two runs differ in pr
 Both keep `lm_head` and `embed_tokens` trainable, which is most of the trainable-parameter count.
 
 ## Evaluation
-
-3,316 test captions, scored with BERTScore, ROUGE, BLEURT-20 and an NLI entailment score (`AlignScore`). Each notebook contains **two evaluation passes** over different prediction files. They are not two measurements of the same thing:
-
-- **Pass A** reads predictions generated with the **LoRA adapter attached** (verified for SmolVLM by matching its rows against the LoRA inference output, and for MedGemma by an explicit `trainer.model` call).
-- **Pass B (SmolVLM)** reads `smolvlm_test_predictions.csv`, which is written by an inference cell that loads `HuggingFaceTB/SmolVLM-500M-Instruct` and **never attaches the adapter** — it is a **zero-shot base-model** run.
-
-That is what the 3× ROUGE-1 gap measures. Cite **pass A** for fine-tuned performance; pass B is a useful base-model baseline. Both merges are inner joins on normalised image id with no empty-caption filtering, so the 3,316 row count is identical across passes.
-
-| Metric | SmolVLM (A: LoRA / B: base) | MedGemma (pass A / pass B) |
-| --- | --- | --- |
-| Overall | 0.362 / 0.223 | 0.389 / 0.319 |
-| Relevance average | — / 0.317 | — / 0.456 |
-| BERTScore (recall) | 0.621 / 0.435 | 0.635 / 0.529 |
-| ROUGE-1 | 0.496 / 0.155 | 0.522 / 0.308 |
-| BLEURT-20 (norm) | — / 0.331 | — / 0.574 |
-| Image–caption similarity | 0.375 / 0.348 | 0.406 / 0.412 |
-| Keyword concept F1 | — / 0.113 | — / 0.223 |
-| AlignScore (entailment) | — / 0.143 | — / 0.140 |
-| Factuality average | — / 0.128 | — / 0.182 |
-
-MedGemma outperforms SmolVLM on every relevance metric in both passes, which is the expected ordering given 4 B vs 0.5 B parameters.
 
 ### Fairness audit — BERTScore by Fitzpatrick tone
 
@@ -152,7 +130,6 @@ notebooks/
 requirements.txt
 ```
 
-A fourth exploratory notebook (Qwen2.5-VL-3B) was excluded: it has no completed training run.
 
 ## Attribution
 
