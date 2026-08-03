@@ -2,8 +2,6 @@
 
 Generating clinical-style captions for dermatology images from the Fitzpatrick17k dataset, in two stages: a retrieval-augmented captioner builds a caption corpus, and two small vision-language models are then LoRA fine-tuned on it and evaluated — including a fairness audit across Fitzpatrick skin-tone groups.
 
-> **Research code, not a medical device.** Nothing here has been clinically validated. See [Limitations](#limitations).
-
 ## Pipeline
 
 ```
