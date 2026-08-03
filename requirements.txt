@@ -1,0 +1,61 @@
+# Dependencies for the dermatology captioning notebooks.
+#
+# Only the versions the notebooks pin explicitly are pinned here; everything
+# else was installed unpinned in Colab and is listed without a version.
+#
+# IMPORTANT: these notebooks do not run end-to-end in a single resolved
+# environment. The evaluation sections deliberately uninstall and reinstall
+# `transformers` (4.38.2 / 4.44.2 / >=4.45.0) because BLEURT, BERTScore and the
+# VLMs disagree on a compatible version. Install the block you need for the
+# stage you are running rather than the whole file at once.
+
+# ---- core (all notebooks) -------------------------------------------------
+torch                     # installed from https://download.pytorch.org/whl/cu121
+torchvision
+accelerate>=0.33.0
+datasets
+peft
+trl                       # SFTTrainer, MedGemma notebook
+bitsandbytes              # 4-bit NF4 for MedGemma
+tensorboard
+hf_transfer
+sentencepiece
+pillow
+timm
+einops
+tqdm
+
+# ---- Stage 1: retrieval + Qwen2-VL captioning -----------------------------
+# notebooks/01_rag_caption_generation.ipynb
+transformers>=4.45.0
+qwen-vl-utils>=0.0.8
+sentence-transformers      # CLIP ViT-L/14 image embeddings
+faiss-cpu                  # per-label IndexFlatIP
+
+# ---- Stage 2: fine-tuning -------------------------------------------------
+# notebooks/02_smolvlm_finetune_eval.ipynb (Flash Attention 2, Ampere or newer)
+flash_attn==2.7.3
+ninja
+
+# ---- Evaluation -----------------------------------------------------------
+# Pinned together; this combination is what the reported metrics were produced
+# under. Note it downgrades transformers.
+bert-score==0.3.13
+transformers==4.38.2
+tokenizers==0.15.2
+
+pandas==2.2.2
+numpy==2.1.3
+sentence-transformers==2.7.0   # MedGemma notebook re-pins this for similarity
+evaluate
+rouge-score
+open_clip_torch                # image-caption similarity
+ftfy
+regex
+spacy
+scispacy
+# en_core_sci_md 0.5.4:
+#   pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_core_sci_md-0.5.4.tar.gz
+# BLEURT-20 (no PyPI release):
+#   pip install git+https://github.com/google-research/bleurt.git
+# Some eval cells then install: transformers==4.44.2 --no-deps
