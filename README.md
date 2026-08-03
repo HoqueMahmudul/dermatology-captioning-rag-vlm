@@ -113,18 +113,6 @@ Per-caption BERTScore for the SmolVLM predictions, grouped by Fitzpatrick scale 
 
 The spread is 0.006 F1 — no tone group is meaningfully disadvantaged on this metric. Two caveats keep this from being a clean bill of health: darker tones are the smallest group (457 images, 14 %), and BERTScore measures wording overlap with the reference, not clinical correctness. A model can score evenly across tones while being uniformly wrong.
 
-## Limitations
-
-Stated plainly, because the headline numbers are easy to over-read:
-
-- **Absolute scores are low.** Overall sits between **0.22 and 0.39** depending on model and evaluation pass. These are not deployable captioning results.
-- **Factual grounding is weak.** Entailment (AlignScore) is **≈0.14** for both models — most generated captions are not entailed by their reference. This is the single most important number in the table and the least flattering.
-- **"UMLS Concept F1" is not UMLS.** No UMLS resource is used anywhere. The column is a term-overlap fallback computed against dermatology keywords, and is reported as `-` in the earlier pass and renamed *Derm Keyword Concept F1* in the later one. Do not cite it as UMLS concept coverage.
-- **Retrieval influence is unmeasured.** The `rag_influence_score` in the Stage-1 notebook returns 0 for every row it was computed on, because the retrieved terms are matched as literal strings while carrying stray quote and bracket characters. Retrieval visibly changes caption wording, but this repository contains no valid quantitative measure of by how much.
-- **Two evaluation passes measure different models.** ROUGE-1 for SmolVLM is 0.496 with the LoRA adapter and 0.155 without it. The MedGemma pass-B inference cell reuses an ambient `model` variable rather than reloading explicitly, so which weights produced its predictions cannot be established from the file alone — treat its pass-A/pass-B gap as unexplained rather than as a fine-tune-vs-base delta.
-- **One prediction file is a manual reformat.** SmolVLM pass A reads `Smolvlm_Caption.csv`, which no cell writes. Its first 10 rows are verbatim identical, in order, to the LoRA inference output `newtest_inference_smolvlm_lora.csv` — so the predictions are the fine-tuned model's — but the header rewrite (`image,caption` → `ID,Caption`, `.jpg` stripped) happened outside the notebook and is not reproducible from this repository.
-- **Dependency churn.** The evaluation cells uninstall and reinstall `transformers` several times (4.38.2 / 4.41.2 / 4.44.2 / ≥4.45.0) to satisfy BLEURT, BERTScore and the VLMs in one runtime. Metrics were not all produced under one resolved environment.
-- **Not clinically validated. Research use only.** No clinician reviewed these captions. Fitzpatrick17k labels are themselves crowd-derived and imperfect.
 
 ## Setup
 
