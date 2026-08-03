@@ -158,4 +158,4 @@ A fourth exploratory notebook (Qwen2.5-VL-3B) was excluded: it has no completed 
 
 Joint work by **Mahmudul Hoque** and **Raisa Nusrat Chowdhury**.
 
-The SmolVLM notebook was adapted from a third-party multimodal fine-tuning tutorial; the MedGemma notebook was adapted from Google's MedGemma fine-tuning notebook (Apache-2.0, copyright header retained in the file). Base models are used under their respective licences: SmolVLM (Apache-2.0), MedGemma (Health AI Developer Foundations terms), Qwen2-VL (Apache-2.0).
+The SmolVLM notebook was adapted from a third-party script; the MedGemma notebook was adapted from Google's MedGemma fine-tuning notebook (Apache-2.0, copyright header retained in the file). Base models are used under their respective licences: SmolVLM (Apache-2.0), MedGemma (Health AI Developer Foundations terms), Qwen2-VL (Apache-2.0).
