@@ -9,10 +9,10 @@ Generating clinical-style captions for dermatology images from the Fitzpatrick17
 ```
 Stage 1                          Stage 2                    Evaluation
 ─────────────────────            ──────────────────         ──────────────────
-CLIP embeddings                  SmolVLM-500M  ─┐           BERTScore / ROUGE
+CLIP embeddings                  SmolVLM-500M  ─┐          BERTScore / ROUGE
    ↓                                            ├─ LoRA →  BLEURT
-per-label FAISS index    →  caption dataset   │           entailment (AlignScore)
-   ↓                          (16,577 images)   │           tone-group fairness
+per-label FAISS index    →  caption dataset     │          entailment (AlignScore)
+   ↓                          (16,577 images)   │          tone-group fairness
 top-12 same-label NN                            │
    ↓                             MedGemma-4B  ──┘
 Qwen2-VL-2B captions
